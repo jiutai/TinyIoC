@@ -1,0 +1,20 @@
+[
+  {
+    "name": "person",
+    "className": "com.ioc.demo.pojo.Person"
+  },
+  {
+    "name": "dog",
+    "className": "com.ioc.demo.pojo.Dog",
+    "propertyList": [
+      {
+        "name": "name",
+        "value": "Tom"
+      },
+      {
+        "name": "age",
+        "value": 3
+      }
+    ]
+  }
+]
