@@ -7,6 +7,7 @@ import com.ioc.demo.entity.Property;
 import com.ioc.demo.utils.BeanUtils;
 import com.ioc.demo.utils.ClassUtils;
 import com.ioc.demo.utils.ReflectionUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
 import java.lang.reflect.Constructor;
@@ -34,6 +35,8 @@ public class BeanFactoryImpl implements BeanFactory {
      * bean名和bean描述信息的映射
      */
     protected Map<String, BeanDefinition> beanDefinitionMap = new ConcurrentHashMap<>();
+    /** 循环依赖中半成品beanMap*/
+    private final Map<String, Object> SEMI_FINISHED_BEAN_MAP = new ConcurrentHashMap<>();
 
     @Override
     public Object getBean(String name) throws Exception {
@@ -41,7 +44,12 @@ public class BeanFactoryImpl implements BeanFactory {
         if (beanMap.containsKey(name)) {
             return beanMap.get(name);
         }
-        Object bean = doCreatBean(name);
+        Object bean = SEMI_FINISHED_BEAN_MAP.get(name);
+        if (bean != null) {
+            System.out.println("循环依赖，返回半成品bean");
+            return bean;
+        }
+        bean = doCreatBean(name);
         //2. 如果没有实例化过，调用方法去实例化
         if (bean != null) {
             //3. 为实例化过后的bean填充属性
